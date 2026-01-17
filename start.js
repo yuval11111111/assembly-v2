@@ -4,7 +4,6 @@ const readline = require('readline').createInterface({
     output: process.stdout
 });
 let programCodeFile = (process.argv[2] == undefined) ? "./program.juv" : process.argv[2]
-let jsCode = (process.argv[3] == undefined) ? "./main.js" : process.argv[3]
 let line = 1
 fs.readFile(programCodeFile, "utf8", (err, program) => {
     for (let i = 0; i <= 0; i++) {
@@ -12,13 +11,16 @@ fs.readFile(programCodeFile, "utf8", (err, program) => {
     }
     if (program) {
         readline.question(`Do yo want to write a new program or to run the current program\n 1->run current program\n 2->write a new program\n`, value => {
-            if (value == `1`) {
-                require(`./index`)
-            } else if (value == `2`) {
-                fs.writeFileSync(programCodeFile, ``)
-                openWriter()
-            } else {
-                process.exit()
+            switch (value) {
+                case `1`:
+                    require(`./index`)
+                    break
+                case `2`:
+                    fs.writeFileSync(programCodeFile, ``)
+                    openWriter()
+                    break
+                default:
+                    process.exit()
             }
         })
     } else {
@@ -28,13 +30,16 @@ fs.readFile(programCodeFile, "utf8", (err, program) => {
     function start() {
         if (program) {
             readline.question(`Do yo want to write a new program or to run the current program\n 1->run current program\n 2->write a new program\n`, value => {
-                if (value == `1`) {
-                    require(`./index`)
-                } else if (value == `2`) {
-                    fs.writeFileSync(programCodeFile, ``)
-                    openWriter()
-                } else {
-                    process.exit()
+                switch (value) {
+                    case `1`:
+                        require(`./index`)
+                        break
+                    case `2`:
+                        fs.writeFileSync(programCodeFile, ``)
+                        openWriter()
+                        break
+                    default:
+                        process.exit()
                 }
             })
         } else {
