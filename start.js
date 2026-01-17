@@ -4,6 +4,7 @@ const readline = require('readline').createInterface({
     output: process.stdout
 });
 let programCodeFile = (process.argv[2] == undefined) ? "./program.juv" : process.argv[2]
+let jsCode = (process.argv[3] == undefined) ? "./main.js" : process.argv[3]
 let line = 1
 fs.readFile(programCodeFile, "utf8", (err, program) => {
     for (let i = 0; i <= 0; i++) {

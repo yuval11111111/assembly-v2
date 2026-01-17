@@ -1,0 +1,16 @@
+LOD test 0
+LOD file 1
+LOD log 2
+LOD test2 1
+ADD test2 2
+LOD test3 1
+AVF test3 test2
+LVF test4 test3
+LVF div test3
+DVF div log
+LOD tettt 0
+LVF from file
+JIN 15 test3 4
+AVF div log
+SAY div
+END
