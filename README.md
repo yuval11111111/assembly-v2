@@ -23,6 +23,8 @@ this language is written in node js which reads text based instructions and conv
 - JIFV - jump to a given line in the file if a given register is equals to another given register's value
 - BSU - bit shift up the value of a given register hard value of bits
 - BSD - bit shift down the value of a given register hard value of bits
+- EXC - execute a function that was definded earlier in the file
+- FNC - start of a definition of a function, the function does not get executed when the runtime executer pass it for the first time
 ### How to run a program
 to run a program you can do 
 ```powershell
