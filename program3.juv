@@ -20,7 +20,7 @@ EXC test2
 SAY t1
 SAY t2
 SAY t3
-EXC test1
+EXC test
 SAY t1
 SAY t2
 SAY t3

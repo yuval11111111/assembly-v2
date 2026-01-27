@@ -53,6 +53,7 @@ ADD A 1
 JINV 8 A N
 END
 ```
+the program above calculate the N numbers in the fibonacci sequence
 ### Another example
 ```
 FNC test
@@ -79,6 +80,4 @@ SAY t2
 SAY t3
 END
 ```
-the program above calculate the N numbers in the fibonacci sequence
-
 *im also working on a js to my assembly compiler but that will take time*
