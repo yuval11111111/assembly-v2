@@ -4,6 +4,8 @@ const programCodeFile = require("./start.js")
 const Variables = require("./variables")
 const codeFile = programCodeFile
 
+const debugMode = false
+
 function add(register, number, variable) {
     if (!isNaN(number)) {
         variable.setValue(register, variable.getValue(register) + parseInt(number))
@@ -78,73 +80,140 @@ function getInstruction(lineOfCode) {
 }
 
 
+function executeInstruction(instruction, registers, line, isInFunction, functions) {
+    let linesToMove = 0
+    switch (instruction[0].toString()) {
+        case "ADD":
+            add(instruction[1], instruction[2], registers)
+            if (debugMode) registers.printVariables("<ADD>")
+            return [linesToMove, isInFunction, undefined]
+        case "SUB":
+            subtract(instruction[1], instruction[2], registers)
+            if (debugMode) registers.printVariables("<SUB>")
+            return [linesToMove, isInFunction, undefined]
+        case "MUL":
+            multiply(instruction[1], instruction[2], registers)
+            if (debugMode) registers.printVariables("<MUL>")
+            return [linesToMove, isInFunction, undefined]
+        case "DIV":
+            divide(instruction[1], instruction[2], registers)
+            if (debugMode) registers.printVariables("<DIV>")
+            return [linesToMove, isInFunction, undefined]
+        case "SAY":
+            say(instruction[1], registers)
+            if (debugMode) registers.printVariables("<SAY>")
+            return [linesToMove, isInFunction, undefined]
+        case "LOD":
+            registers.createVariable(instruction[1], parseInt(instruction[2]))
+            if (debugMode) registers.printVariables("<LOD>")
+            return [linesToMove, isInFunction, undefined]
+        case "JMP":
+            linesToMove = parseInt(instruction[1]) -1 - line
+            if (debugMode) registers.printVariables("<JMP>")
+            return [linesToMove, isInFunction, undefined]
+        case "JIF":
+            linesToMove = (isEqual(instruction[2], instruction[3], registers)) ? instruction[1] -2 - line : 0
+            if (debugMode) registers.printVariables("<JIF>")
+            return [linesToMove, isInFunction, undefined]
+        case "JIN":
+            linesToMove = (!isEqual(instruction[2], instruction[3], registers)) ? instruction[1] -2 - line : 0
+            if (debugMode) registers.printVariables("<JIN>")
+            return [linesToMove, isInFunction, undefined]
+        case "LVF":
+            writeFromRegister(instruction[1], instruction[2], registers)
+            if (debugMode) registers.printVariables("<LVF>")
+            return [linesToMove, isInFunction, undefined]
+        case "AVF":
+            add(instruction[1], registers.getValue(instruction[2]), registers)
+            if (debugMode) registers.printVariables("<AVF>")
+            return [linesToMove, isInFunction, undefined]
+        case "SVF":
+            subtract(instruction[1], registers.getValue(instruction[2]), registers)
+            if (debugMode) registers.printVariables("<SVF>")
+            return [linesToMove, isInFunction, undefined]
+        case "MVF":
+            multiply(instruction[1], registers.getValue(instruction[2]), registers)
+            if (debugMode) registers.printVariables("<MVF>")   
+            return [linesToMove, isInFunction, undefined]
+        case "DVF":
+            divide(instruction[1], registers.getValue(instruction[2]), registers)
+            if (debugMode) registers.printVariables("<DVF>")
+            return [linesToMove, isInFunction, undefined]
+        case "END":
+            process.exit()
+        case "JIFV":
+            linesToMove = (isEqual(instruction[2], registers.getValue(instruction[3]), registers)) ? instruction[1] -2 - line : 0
+            if (debugMode) registers.printVariables("<JIFV>")
+            return [linesToMove, isInFunction, undefined]
+        case "JINV":
+            linesToMove = (!isEqual(instruction[2], registers.getValue(instruction[3]), registers)) ? instruction[1] -2 - line : 0
+            if (debugMode) registers.printVariables("<JINV>")
+            return [linesToMove, isInFunction, undefined]
+        case "BSU":
+            bitShiftUp(instruction[1], instruction[2], registers)
+            if (debugMode) registers.printVariables("<BSU>")
+            return [linesToMove, isInFunction, undefined]
+        case "BSD":
+            bitShiftDown(instruction[1], instruction[2], registers)
+            if (debugMode) registers.printVariables("<BSD>")
+            return [linesToMove, isInFunction, undefined]
+        case "FNC":
+            return [linesToMove, true, instruction[1]]
+        case "EXC":
+            if (functions.has(instruction[1])) {
+                const functionLines = functions.get(instruction[1])
+                if (debugMode) registers.printVariables("<EXC>")
+                for (let i = 0; i < functionLines.length; i++) {
+                    executeInstruction(
+                        getInstruction(functionLines[i]),
+                        registers,
+                        line + i,
+                        isInFunction,
+                        functions
+                    )
+                }
+                if (debugMode) registers.printVariables("</EXC>")
+            } else {
+                throw new Error(`Function ${instruction[1]} not defined yet`)
+            }
+            return [linesToMove, isInFunction, undefined]
+        default:
+            return [linesToMove, isInFunction, undefined]
+    }
+}
 
 
 function runProgram() {
     const VARIABLE = new Variables()
     setTimeout(() => {
         const lines = splitLines(readCode())
-        for (let line = 0 ; line < splitLines(readCode()).length ; line++) {
-            const action = getInstruction(lines[line])
+        let isInFunction = false
+        let functionLines = []
+        let currentFunctionName = ""
+        let functions = new Map()
+        for (let line = 0; line < lines.length; line++) {
+            if (!isInFunction) {
+                const action = getInstruction(lines[line])
+                let returnVals = executeInstruction(action, VARIABLE, line, isInFunction, functions)
+                line += returnVals[0]
+                isInFunction = returnVals[1]
+                currentFunctionName = returnVals[2] || currentFunctionName
 
-            switch (action[0].toString()) {
-                case "ADD":
-                    add(action[1], action[2], VARIABLE)
-                    break
-                case "SUB":
-                    subtract(action[1], action[2], VARIABLE)
-                    break
-                case "MUL":
-                    multiply(action[1], action[2], VARIABLE)
-                    break
-                case "DIV":
-                    divide(action[1], action[2], VARIABLE)
-                    break
-                case "SAY":
-                    say(action[1], VARIABLE)
-                    break
-                case "LOD":
-                    VARIABLE.createVariable(action[1], parseInt(action[2]))
-                    break
-                case "JMP":
-                    line = parseInt(action[1]) -2
-                    break
-                case "JIF":
-                    line = (isEqual(action[2], action[3], VARIABLE)) ? action[1] -2 : line
-                    break
-                case "JIN":
-                    line = (!isEqual(action[2], action[3], VARIABLE)) ? action[1] -2 : line
-                    break
-                case "LVF":
-                    writeFromRegister(action[1], action[2], VARIABLE)
-                    break
-                case "AVF":
-                    add(action[1], VARIABLE.getValue(action[2]), VARIABLE)
-                    break
-                case "SVF":
-                    subtract(action[1], VARIABLE.getValue(action[2]), VARIABLE)
-                    break
-                case "MVF":
-                    multiply(action[1], VARIABLE.getValue(action[2]), VARIABLE)
-                    break
-                case "DVF":
-                    divide(action[1], VARIABLE.getValue(action[2]), VARIABLE)
-                    break
-                case "END":
-                    process.exit()
-                case "JIFV":
-                    line = (isEqual(action[2], VARIABLE.getValue(action[3]), VARIABLE)) ? action[1] -2 : line
-                    break
-                case "JINV":
-                    line = (!isEqual(action[2], VARIABLE.getValue(action[3]), VARIABLE)) ? action[1] -2 : line
-                    break
-                case "BSU":
-                    bitShiftUp(action[1], action[2], VARIABLE)
-                    break
-                case "BSD":
-                    bitShiftDown(action[1], action[2], VARIABLE)
-                    break
+                if (isInFunction) {
+                    functionLines = []
+                }
+            } else {
+                if (/^\s+/.test(lines[line])) {
+                    functionLines.push(lines[line].trim())
+                } else {
+                    functions.set(currentFunctionName, functionLines)
+                    isInFunction = false
+                    line--
+                }
             }
+        }
+        if (isInFunction) {
+            functions.set(currentFunctionName, functionLines)
         }
     }, 20)
 }

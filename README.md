@@ -51,6 +51,32 @@ ADD A 1
 JINV 8 A N
 END
 ```
+### Another example
+```
+FNC test
+    ADD t1 2
+    ADD t2 4
+    LVF t3 t1
+    AVF t3 t2
+
+FNC test2
+    ADD t1 5
+    SUB t2 3
+    LVF t3 t2
+    SVF t1 t3
+
+LOD t1 3
+LOD t2 5
+EXC test
+SAY t1
+SAY t2
+SAY t3
+EXC test2
+SAY t1
+SAY t2
+SAY t3
+END
+```
 the program above calculate the N numbers in the fibonacci sequence
 
 *im also working on a js to my assembly compiler but that will take time*

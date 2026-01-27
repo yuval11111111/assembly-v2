@@ -8,9 +8,9 @@ var div = test3 / log
 var tettt
 const from = file
 
-if (div == 3) {
-    div =- 1
+if (div >= 7) {
+    div -= 1
     if (div == 2) {
-        div=+1
+        div += 1
     }
 }

@@ -12,6 +12,10 @@ class Variables {
     setValue(name, value) {
         this.#vars.set(name, value)
     }
+
+    printVariables(message) {
+        console.log(message, this.#vars)
+    }
 }
 
 module.exports = Variables

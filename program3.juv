@@ -1,0 +1,27 @@
+FNC test
+    ADD t1 2
+    ADD t2 4
+    LVF t3 t1
+    AVF t3 t2
+
+FNC test2
+    ADD t1 5
+    SUB t2 3
+    LVF t3 t2
+    SVF t1 t3
+
+LOD t1 3
+LOD t2 5
+EXC test
+SAY t1
+SAY t2
+SAY t3
+EXC test2
+SAY t1
+SAY t2
+SAY t3
+EXC test1
+SAY t1
+SAY t2
+SAY t3
+END
