@@ -69,6 +69,10 @@ function bitwiseXor(destRegister, operand, variable) {
     variable.setValue(destRegister, variable.getValue(destRegister) ^ operand)
 }
 
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 
 
 
@@ -91,7 +95,7 @@ function getInstruction(lineOfCode) {
 }
 
 
-function executeInstruction(instruction, registers, line, isInFunction, functions) {
+async function executeInstruction(instruction, registers, line, isInFunction, functions) {
     let linesToMove = 0
     switch (instruction[0].toString()) {
         case "ADD":
@@ -200,6 +204,9 @@ function executeInstruction(instruction, registers, line, isInFunction, function
             bitwiseXor(instruction[1], registers.getValue(instruction[2]), registers)
             if (debugMode) registers.printVariables("<BWX>")
             return [linesToMove, isInFunction, undefined]
+        case "SLP":
+            await sleep(parseInt(instruction[1]))
+            return [linesToMove, isInFunction, undefined]
         case "FNC":
             return [linesToMove, true, instruction[1]]
         case "EXC":
@@ -207,7 +214,7 @@ function executeInstruction(instruction, registers, line, isInFunction, function
                 const functionLines = functions.get(instruction[1])
                 if (debugMode) registers.printVariables("<EXC>")
                 for (let i = 0; i < functionLines.length; i++) {
-                    executeInstruction(
+                    await executeInstruction(
                         getInstruction(functionLines[i]),
                         registers,
                         line + i,
@@ -228,7 +235,7 @@ function executeInstruction(instruction, registers, line, isInFunction, function
 
 function runProgram() {
     const VARIABLE = new Variables()
-    setTimeout(() => {
+    setTimeout(async () => {
         const lines = splitLines(readCode())
         let isInFunction = false
         let functionLines = []
@@ -237,7 +244,7 @@ function runProgram() {
         for (let line = 0; line < lines.length; line++) {
             if (!isInFunction) {
                 const action = getInstruction(lines[line])
-                let returnVals = executeInstruction(action, VARIABLE, line, isInFunction, functions)
+                let returnVals = await executeInstruction(action, VARIABLE, line, isInFunction, functions)
                 line += returnVals[0]
                 isInFunction = returnVals[1]
                 currentFunctionName = returnVals[2] || currentFunctionName

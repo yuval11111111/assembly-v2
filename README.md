@@ -33,6 +33,7 @@ this language is written in node js which reads text based instructions and conv
 - BWXV - execute a bitwise xor on a register's value and a another's register's value
 - EXC - execute a function that was definded earlier in the file
 - FNC - start of a definition of a function, the function does not get executed when the runtime executer pass it for the first time
+- SLP - stops the interpreter for given milisecends
 ### Syntax of each instruction
 #### LOD
 ```
@@ -208,6 +209,15 @@ BWO R0 R1 -> R0 = R0 | R1 = 6 | 9 = 15, it does bitwise or with a given register
 LOD R0 6
 LOD R1 10
 BWX R0 R1 -> R0 = R0 ^ R1 = 6 ^ 10 = 12, it does bitwise xor with a given register's value and another register's value
+```
+#### SLP
+```
+FNC loop
+    ADD R0 1
+    SLP 3000 -> sleeps x number of milisecends
+    PRT R0
+EXC loop
+JMP 4
 ```
 ### How to run a program
 to run a program you can do 
