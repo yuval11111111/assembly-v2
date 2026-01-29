@@ -1,5 +1,5 @@
 LOD 0 1
 LOD 1 1
 ADD 1 0
-SAY 1
+PRT 1
 END

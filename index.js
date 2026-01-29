@@ -33,7 +33,7 @@ function divide(register, number, variable) {
     }
 }
 
-function say(register, variable) {
+function print(register, variable) {
     log(variable.getValue(register))
 }
 
@@ -57,6 +57,17 @@ function bitShiftDown(destRegister, shifter, variable) {
     variable.setValue(destRegister, variable.getValue(destRegister) >> shifter)
 }
 
+function bitwiseAnd(destRegister, operand, variable) {
+    variable.setValue(destRegister, variable.getValue(destRegister) & operand)
+}
+
+function bitwiseOr(destRegister, operand, variable) {
+    variable.setValue(destRegister, variable.getValue(destRegister) | operand)
+}
+
+function bitwiseXor(destRegister, operand, variable) {
+    variable.setValue(destRegister, variable.getValue(destRegister) ^ operand)
+}
 
 
 
@@ -99,9 +110,9 @@ function executeInstruction(instruction, registers, line, isInFunction, function
             divide(instruction[1], instruction[2], registers)
             if (debugMode) registers.printVariables("<DIV>")
             return [linesToMove, isInFunction, undefined]
-        case "SAY":
-            say(instruction[1], registers)
-            if (debugMode) registers.printVariables("<SAY>")
+        case "PRT":
+            print(instruction[1], registers)
+            if (debugMode) registers.printVariables("<PRT>")
             return [linesToMove, isInFunction, undefined]
         case "LOD":
             registers.createVariable(instruction[1], parseInt(instruction[2]))
@@ -156,6 +167,38 @@ function executeInstruction(instruction, registers, line, isInFunction, function
         case "BSD":
             bitShiftDown(instruction[1], instruction[2], registers)
             if (debugMode) registers.printVariables("<BSD>")
+            return [linesToMove, isInFunction, undefined]
+        case "BWA":
+            bitwiseAnd(instruction[1], instruction[2], registers)
+            if (debugMode) registers.printVariables("<BWA>")
+            return [linesToMove, isInFunction, undefined]
+        case "BWO":
+            bitwiseOr(instruction[1], instruction[2], registers)
+            if (debugMode) registers.printVariables("<BWO>")
+            return [linesToMove, isInFunction, undefined]
+        case "BWX":
+            bitwiseXor(instruction[1], instruction[2], registers)
+            if (debugMode) registers.printVariables("<BWX>")
+            return [linesToMove, isInFunction, undefined]
+        case "BSUV":
+            bitShiftUp(instruction[1], registers.getValue(instruction[2]), registers)
+            if (debugMode) registers.printVariables("<BSU>")
+            return [linesToMove, isInFunction, undefined]
+        case "BSDV":
+            bitShiftDown(instruction[1], registers.getValue(instruction[2]), registers)
+            if (debugMode) registers.printVariables("<BSD>")
+            return [linesToMove, isInFunction, undefined]
+        case "BWAV":
+            bitwiseAnd(instruction[1], registers.getValue(instruction[2]), registers)
+            if (debugMode) registers.printVariables("<BWA>")
+            return [linesToMove, isInFunction, undefined]
+        case "BWOV":
+            bitwiseOr(instruction[1], registers.getValue(instruction[2]), registers)
+            if (debugMode) registers.printVariables("<BWO>")
+            return [linesToMove, isInFunction, undefined]
+        case "BWXV":
+            bitwiseXor(instruction[1], registers.getValue(instruction[2]), registers)
+            if (debugMode) registers.printVariables("<BWX>")
             return [linesToMove, isInFunction, undefined]
         case "FNC":
             return [linesToMove, true, instruction[1]]

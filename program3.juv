@@ -13,15 +13,15 @@ FNC test2
 LOD t1 3
 LOD t2 5
 EXC test
-SAY t1
-SAY t2
-SAY t3
+PRT t1
+PRT t2
+PRT t3
 EXC test2
-SAY t1
-SAY t2
-SAY t3
+PRT t1
+PRT t2
+PRT t3
 EXC test
-SAY t1
-SAY t2
-SAY t3
+PRT t1
+PRT t2
+PRT t3
 END
