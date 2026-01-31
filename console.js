@@ -4,9 +4,6 @@ const readline = require('readline').createInterface({
     output: process.stdout
 });
 const {programCodeFile} = require("./start.js")
-fs.readFile(programCodeFile, "utf8", (err, program) => {
-    openWriter()
-})
 
 
 let line = 1
@@ -27,3 +24,5 @@ function openWriter() {
         }
     })
 }
+
+openWriter()
