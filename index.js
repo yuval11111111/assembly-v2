@@ -1,6 +1,6 @@
 const { log } = require("console")
 const fs = require("fs")
-const programCodeFile = require("./start.js")
+const {programCodeFile} = require("./start.js")
 const Variables = require("./variables")
 const codeFile = programCodeFile
 
