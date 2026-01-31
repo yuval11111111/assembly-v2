@@ -94,117 +94,127 @@ function getInstruction(lineOfCode) {
     return instruction
 }
 
+function debugPrint(message, variable, instruction, line) {
+    variable.printVariables(message)
+    console.log({ instructionName: message, instruction: instruction, line: line })
+}
+
 
 async function executeInstruction(instruction, registers, line, isInFunction, functions) {
     let linesToMove = 0
     switch (instruction[0].toString()) {
         case "ADD":
             add(instruction[1], instruction[2], registers)
-            if (debugMode) registers.printVariables("<ADD>")
+            if (debugMode) debugPrint("<ADD>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "SUB":
             subtract(instruction[1], instruction[2], registers)
-            if (debugMode) registers.printVariables("<SUB>")
+            if (debugMode) debugPrint("<SUB>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "MUL":
             multiply(instruction[1], instruction[2], registers)
-            if (debugMode) registers.printVariables("<MUL>")
+            if (debugMode) debugPrint("<MUL>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "DIV":
             divide(instruction[1], instruction[2], registers)
-            if (debugMode) registers.printVariables("<DIV>")
+            if (debugMode) debugPrint("<DIV>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "PRT":
             print(instruction[1], registers)
-            if (debugMode) registers.printVariables("<PRT>")
+            if (debugMode) debugPrint("<PRT>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "LOD":
             registers.createVariable(instruction[1], parseInt(instruction[2]))
-            if (debugMode) registers.printVariables("<LOD>")
+            if (debugMode) debugPrint("<LOD>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "JMP":
-            linesToMove = parseInt(instruction[1]) -1 - line
-            if (debugMode) registers.printVariables("<JMP>")
+            linesToMove = parseInt(instruction[1]) -2 - line
+            if (debugMode) debugPrint("<JMP>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "JIF":
-            linesToMove = (isEqual(instruction[2], instruction[3], registers)) ? instruction[1] -2 - line : 0
-            if (debugMode) registers.printVariables("<JIF>")
+            linesToMove = (isEqual(instruction[2], instruction[3], registers)) ? 
+                instruction[1] -2 - line : 0
+            if (debugMode) debugPrint("<JIF>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "JIN":
-            linesToMove = (!isEqual(instruction[2], instruction[3], registers)) ? instruction[1] -2 - line : 0
-            if (debugMode) registers.printVariables("<JIN>")
+            linesToMove = (!isEqual(instruction[2], instruction[3], registers)) ? 
+                instruction[1] -2 - line : 0
+            if (debugMode) debugPrint("<JIN>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "LVF":
             writeFromRegister(instruction[1], instruction[2], registers)
-            if (debugMode) registers.printVariables("<LVF>")
+            if (debugMode) debugPrint("<LVF>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "AVF":
             add(instruction[1], registers.getValue(instruction[2]), registers)
-            if (debugMode) registers.printVariables("<AVF>")
+            if (debugMode) debugPrint("<AVF>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "SVF":
             subtract(instruction[1], registers.getValue(instruction[2]), registers)
-            if (debugMode) registers.printVariables("<SVF>")
+            if (debugMode) debugPrint("<SVF>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "MVF":
             multiply(instruction[1], registers.getValue(instruction[2]), registers)
-            if (debugMode) registers.printVariables("<MVF>")   
+            if (debugMode) debugPrint("<MVF>", registers, instruction, line)   
             return [linesToMove, isInFunction, undefined]
         case "DVF":
             divide(instruction[1], registers.getValue(instruction[2]), registers)
-            if (debugMode) registers.printVariables("<DVF>")
+            if (debugMode) debugPrint("<DVF>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "END":
             process.exit()
         case "JIFV":
-            linesToMove = (isEqual(instruction[2], registers.getValue(instruction[3]), registers)) ? instruction[1] -2 - line : 0
-            if (debugMode) registers.printVariables("<JIFV>")
+            linesToMove = (isEqual(instruction[2], registers.getValue(instruction[3]), registers)) ? 
+                instruction[1] -2 - line : 0
+            if (debugMode) debugPrint("<JIFV>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "JINV":
-            linesToMove = (!isEqual(instruction[2], registers.getValue(instruction[3]), registers)) ? instruction[1] -2 - line : 0
-            if (debugMode) registers.printVariables("<JINV>")
+            linesToMove = (!isEqual(instruction[2], registers.getValue(instruction[3]), registers)) ? 
+                instruction[1] -2 - line : 0
+            if (debugMode) debugPrint("<JINV>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "BSU":
             bitShiftUp(instruction[1], instruction[2], registers)
-            if (debugMode) registers.printVariables("<BSU>")
+            if (debugMode) debugPrint("<BSU>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "BSD":
             bitShiftDown(instruction[1], instruction[2], registers)
-            if (debugMode) registers.printVariables("<BSD>")
+            if (debugMode) debugPrint("<BSD>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "BWA":
             bitwiseAnd(instruction[1], instruction[2], registers)
-            if (debugMode) registers.printVariables("<BWA>")
+            if (debugMode) debugPrint("<BWA>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "BWO":
             bitwiseOr(instruction[1], instruction[2], registers)
-            if (debugMode) registers.printVariables("<BWO>")
+            if (debugMode) debugPrint("<BWO>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "BWX":
             bitwiseXor(instruction[1], instruction[2], registers)
-            if (debugMode) registers.printVariables("<BWX>")
+            if (debugMode) debugPrint("<BWX>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "BSUV":
             bitShiftUp(instruction[1], registers.getValue(instruction[2]), registers)
-            if (debugMode) registers.printVariables("<BSU>")
+            if (debugMode) debugPrint("<BSU>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "BSDV":
             bitShiftDown(instruction[1], registers.getValue(instruction[2]), registers)
-            if (debugMode) registers.printVariables("<BSD>")
+            if (debugMode) debugPrint("<BSD>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "BWAV":
             bitwiseAnd(instruction[1], registers.getValue(instruction[2]), registers)
-            if (debugMode) registers.printVariables("<BWA>")
+            if (debugMode) debugPrint("<BWA>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "BWOV":
             bitwiseOr(instruction[1], registers.getValue(instruction[2]), registers)
-            if (debugMode) registers.printVariables("<BWO>")
+            if (debugMode) debugPrint("<BWO>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "BWXV":
             bitwiseXor(instruction[1], registers.getValue(instruction[2]), registers)
-            if (debugMode) registers.printVariables("<BWX>")
+            if (debugMode) debugPrint("<BWX>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         case "SLP":
+            if (debugMode) debugPrint("<SLP>", registers, instruction, line)
             await sleep(parseInt(instruction[1]))
             return [linesToMove, isInFunction, undefined]
         case "FNC":
@@ -212,17 +222,35 @@ async function executeInstruction(instruction, registers, line, isInFunction, fu
         case "EXC":
             if (functions.has(instruction[1])) {
                 const functionLines = functions.get(instruction[1])
-                if (debugMode) registers.printVariables("<EXC>")
+                if (debugMode) debugPrint("<EXC>", registers, instruction, line)
                 for (let i = 0; i < functionLines.length; i++) {
-                    await executeInstruction(
-                        getInstruction(functionLines[i]),
-                        registers,
-                        line + i,
-                        isInFunction,
-                        functions
-                    )
+                    //im not proud of these 2 instructions being here but i cannot find a better way to do it right now also im tired rn
+                    if (getInstruction(functionLines[i])[0] == "EFF") {
+                        if (debugMode) debugPrint("<EFF>", registers, getInstruction(functionLines[i]), line)
+                        if (registers.getValue(getInstruction(functionLines[i])[1]) == 
+                                parseInt(getInstruction(functionLines[i])[2])) {
+                            return [linesToMove, false, undefined]
+                        }  
+                    }
+                    else if (getInstruction(functionLines[i])[0] == "EFFV") {
+                        if (debugMode) debugPrint("<EFFV>", registers, getInstruction(functionLines[i]), line)
+                        if (registers.getValue(getInstruction(functionLines[i])[1]) == 
+                                registers.getValue(getInstruction(functionLines[i])[2])) {
+                            return [linesToMove, false, undefined]
+                        }  
+                    }
+                    else {
+                        if (debugMode) debugPrint("<EXC_STEP>", registers, getInstruction(functionLines[i]), line)
+                        await executeInstruction(
+                            getInstruction(functionLines[i]),
+                            registers,
+                            line,
+                            isInFunction,
+                            functions
+                        )
+                    }
                 }
-                if (debugMode) registers.printVariables("</EXC>")
+                if (debugMode) debugPrint("</EXC>", registers, instruction, line)
             } else {
                 throw new Error(`Function ${instruction[1]} not defined yet`)
             }
@@ -269,4 +297,5 @@ function runProgram() {
 }
 
 runProgram()
+
 

@@ -28,12 +28,14 @@ this language is written in node js which reads text based instructions and conv
 - BWX - execute a bitwise xor on a register's value and a hard value
 - BSUV - bit shift up the value of a given register another's register's value of bits
 - BSDV - bit shift down the value of a given register another's register's value of bits
-- BWAV - execute a bitwise and on a register's value and a another's register's value
-- BWOV - execute a bitwise or on a register's value and a another's register's value
-- BWXV - execute a bitwise xor on a register's value and a another's register's value
+- BWAV - execute a bitwise and on a register's value and another's register's value
+- BWOV - execute a bitwise or on a register's value and another's register's value
+- BWXV - execute a bitwise xor on a register's value and another's register's value
 - EXC - execute a function that was definded earlier in the file
 - FNC - start of a definition of a function, the function does not get executed when the runtime executer pass it for the first time
 - SLP - stops the interpreter for given milisecends
+- EFF - *a function specific instruction* force exit a function if register's value is equals to a hard value
+- EFFV - *a function specific instruction* force exit a function if register's value is equals to another's register's value
 ### Syntax of each instruction
 #### LOD
 ```
@@ -218,6 +220,31 @@ FNC loop
     PRT R0
 EXC loop
 JMP 4
+```
+#### EFF
+```
+FNC loopTill10
+    ADD R0 1
+    PRT R0
+    SLP 50
+    EFF R0 10
+    EXC loopTill10
+LOD R0 1
+EXC loopTill10
+END
+```
+#### EFFV
+```
+FNC loopTillR1
+    ADD R0 1
+    PRT R0
+    SLP 50
+    EFFV R0 R1
+    EXC loopTillR1
+LOD R0 1
+LOD R1 15
+EXC loopTillR1
+END
 ```
 ### How to run a program
 to run a program you can do 
