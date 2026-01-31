@@ -220,40 +220,36 @@ async function executeInstruction(instruction, registers, line, isInFunction, fu
         case "FNC":
             return [linesToMove, true, instruction[1]]
         case "EXC":
-            if (functions.has(instruction[1])) {
-                const functionLines = functions.get(instruction[1])
-                if (debugMode) debugPrint("<EXC>", registers, instruction, line)
-                for (let i = 0; i < functionLines.length; i++) {
-                    //im not proud of these 2 instructions being here but i cannot find a better way to do it right now also im tired rn
-                    if (getInstruction(functionLines[i])[0] == "EFF") {
-                        if (debugMode) debugPrint("<EFF>", registers, getInstruction(functionLines[i]), line)
-                        if (registers.getValue(getInstruction(functionLines[i])[1]) == 
-                                parseInt(getInstruction(functionLines[i])[2])) {
-                            return [linesToMove, false, undefined]
-                        }  
-                    }
-                    else if (getInstruction(functionLines[i])[0] == "EFFV") {
-                        if (debugMode) debugPrint("<EFFV>", registers, getInstruction(functionLines[i]), line)
-                        if (registers.getValue(getInstruction(functionLines[i])[1]) == 
-                                registers.getValue(getInstruction(functionLines[i])[2])) {
-                            return [linesToMove, false, undefined]
-                        }  
-                    }
-                    else {
-                        if (debugMode) debugPrint("<EXC_STEP>", registers, getInstruction(functionLines[i]), line)
-                        await executeInstruction(
-                            getInstruction(functionLines[i]),
-                            registers,
-                            line,
-                            isInFunction,
-                            functions
-                        )
-                    }
-                }
-                if (debugMode) debugPrint("</EXC>", registers, instruction, line)
-            } else {
+            if (!functions.has(instruction[1])) {
                 throw new Error(`Function ${instruction[1]} not defined yet`)
             }
+
+            const functionLines = functions.get(instruction[1])
+            if (debugMode) debugPrint("<EXC>", registers, instruction, line)
+
+            for (let i = 0; i < functionLines.length; i++) {
+                const functionInstruction = getInstruction(functionLines[i])
+                 //im not proud of these 2 instructions being here but i cannot find a better way to do it right now also im tired rn
+                switch (functionInstruction[0]) {
+                    case "EFF":
+                        if (debugMode) debugPrint("<EFF>", registers, functionInstruction, line)
+                        if (registers.getValue(functionInstruction[1]) == parseInt(functionInstruction[2])) {
+                            return [linesToMove, false, undefined]
+                        }
+                        break
+                    case "EFFV":
+                        if (debugMode) debugPrint("<EFFV>", registers, functionInstruction, line)
+                        if (registers.getValue(functionInstruction[1]) == registers.getValue(functionInstruction[2])) {
+                            return [linesToMove, false, undefined]
+                        }
+                        break
+                    default:
+                        if (debugMode) debugPrint("<EXC_STEP>", registers, functionInstruction, line)
+                        await executeInstruction(functionInstruction, registers, line, isInFunction, functions)
+                }
+            }
+
+            if (debugMode) debugPrint("</EXC>", registers, instruction, line)
             return [linesToMove, isInFunction, undefined]
         default:
             return [linesToMove, isInFunction, undefined]
