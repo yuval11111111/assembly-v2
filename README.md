@@ -231,6 +231,14 @@ node start
 
 ### Example for a program
 ```
+FNC step
+    LVF TMP F0
+    AVF TMP F1
+    PRT TMP
+    LVF F0 F1
+    LVF F1 TMP
+    ADD A 1
+    SLP 250
 LOD N 69
 LOD F0 1
 LOD F1 1
@@ -238,40 +246,9 @@ PRT F0
 PRT F1
 LOD A 2
 LOD TMP 0
-LVF TMP F0
-AVF TMP F1
-PRT TMP
-LVF F0 F1
-LVF F1 TMP
-ADD A 1
-JINV 8 A N
+EXC step
+JINV 16 A N
 END
 ```
 the program above calculate the N numbers in the fibonacci sequence
-### Another example
-```
-FNC test
-    ADD t1 2
-    ADD t2 4
-    LVF t3 t1
-    AVF t3 t2
-
-FNC test2
-    ADD t1 5
-    SUB t2 3
-    LVF t3 t2
-    SVF t1 t3
-
-LOD t1 3
-LOD t2 5
-EXC test
-PRT t1
-PRT t2
-PRT t3
-EXC test2
-PRT t1
-PRT t2
-PRT t3
-END
-```
 *im also working on a js to my assembly compiler but that will take time*
